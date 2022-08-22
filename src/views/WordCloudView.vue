@@ -271,7 +271,7 @@ export default {
                     const data = response.data;
                     // console.log(data)
                     this.total = data.total;
-                    this.tableData = data.data;
+                    this.tableData = data.data== null? []: data.data;
                     this.currentPage = data.page;
                 }).catch((error)=>{
                     console.log(error)
