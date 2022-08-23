@@ -102,6 +102,7 @@ import { WordCloud } from '@antv/g2plot';
 import axios from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Qs from 'qs'
+import {mix} from '../assets/js/utils'
 // axios.defaults.baseURL = 'cloudapi'
 export default {
     data(){
@@ -142,6 +143,15 @@ export default {
     },
     created(){
         window.clickTooltip = this.clickTooltip;
+        const el = document.documentElement;
+        const pri = `--el-color-primary`
+        const color_primary = '#248054'
+        getComputedStyle(el).getPropertyValue(pri);
+        el.style.setProperty(pri, color_primary);
+        const mixWhite = "#FFFFFF"
+        for (let i = 1; i < 10; i += 1) {
+            el.style.setProperty(`${pri}-light-${i}`, mix(color_primary, mixWhite, i * 0.1));
+        }     
     },
     methods:{
         initChart(){
@@ -150,7 +160,7 @@ export default {
                 autoFit:true,
                 wordField: 'name',
                 weightField: 'cnt',
-                colorField:'cnt',
+                colorField:'name',
                 wordStyle: {
                     fontFamily: 'Verdana',
                     fontSize: [15, 30],
@@ -186,29 +196,11 @@ export default {
 
             wordCloud.render();
             // 图例名称添加点击事件
-            // wordCloud.on('element:click', (...args) => {
-            //     console.log(args[0].data.data.text);
-            //     this.searchContent = args[0].data.data.text;
-            //     //todo：向后端请求数据
-            //     axios({
-            //         method: 'post',
-            //         url:'/mock/two',
-            //         data:{
-            //             label: this.searchContent,
-            //             // net: this.netValue,
-            //             category: this.categoryValue,
-            //             page:1,
-            //             page_size:this.pageSize
-            //         }
-            //     }).then((response)=>{
-            //         console.log(response)
-            //         const data = response.data;
-            //         this.total = data.total;
-            //         this.tableData = data.result_list;
-            //     }).catch((error)=>{
-            //         console.log(error)
-            //     })
-            // });
+            wordCloud.on('element:click', (...args) => {
+                // console.log(args[0].data.data.text);
+                this.searchContent = args[0].data.data.text;
+                this.search();
+            });
         },
         clickTooltip(label, category){
             console.log(label, category)
@@ -380,6 +372,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+    // :root{
+    //     --el-color-primary: green;
+    // }
+    @primary-color:#248054;
     #whole-wordcloud-page{
         width:100%;
         display: flex;
@@ -420,7 +416,7 @@ export default {
         }
     }
     .label-button{
-        width:80%
+        width:80%;
     }
     #labels-container{
         width: 90%;
