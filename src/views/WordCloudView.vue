@@ -103,7 +103,8 @@ import axios from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Qs from 'qs'
 import {mix} from '../assets/js/utils'
-// axios.defaults.baseURL = 'cloudapi'
+// axios.defaults.baseURL = 'http://8.134.73.140:58003'
+axios.defaults.baseURL = window.location.origin
 export default {
     data(){
         return{
@@ -247,7 +248,7 @@ export default {
                 // 向后端请求数据
                 axios({
                     method: 'get',
-                    url:'/cloudapi/api/cloud/filter',
+                    url:'/api/cloud/filter',
                     params:{
                         keyword: this.searchContent,
                         // net: this.netValue,
@@ -280,7 +281,7 @@ export default {
             //向后端请求数据
             axios({
                 method: 'get',
-                url:'/cloudapi/api/cloud/filter',
+                url:'/api/cloud/filter',
                 params:{
                     keyword: this.searchContent,
                     // net: this.netValue,
@@ -346,7 +347,7 @@ export default {
     mounted(){
         axios({
             method: 'get',
-            url: '/cloudapi/api/cloud'
+            url: '/api/cloud'
         }).then((response)=>{
             // console.log(response)
             const data = response.data.data;
