@@ -2,24 +2,15 @@
     <div id="whole-wordcloud-page">
         <el-container>
             <el-main>
+                <div id="return-button">
+                    <a href="http://xblock.pro/#/"><img src="../assets/xblocklogo-326_49.png" /></a>
+                </div>
                 <div id="wordcloud-container">
-                    <p>Label Word Cloud</p>
+                    <p>XLabelCloud</p>
                     <div id="wordcloud"></div>
                 </div>
                 <div id="search-container">
                     <el-row :gutter="20">
-                        <!-- <el-col :sm="6" :xs="10">
-                            <div id="net-selector" class="layout-search">
-                                <p>net:</p>
-                                <el-select v-model="netValue" placeholder="Select" @change="search">
-                                    <el-option
-                                    v-for="item in netOptions"
-                                    :key="item"
-                                    :value="item"
-                                    />
-                                </el-select>
-                            </div>
-                        </el-col> -->
                         <el-col :sm="10" :xs="24">
                             <div id="category-selector" class="layout-search">
                                 <p>category:</p>
@@ -67,7 +58,6 @@
                                     <el-tag v-for="item in scope.row.labels" v-bind:key="item" disable-transitions hit @click="searchThisLabel(item)"> {{item}}</el-tag>
                                 </template>
                             </el-table-column>
-                            <!-- <el-table-column label="Net" prop="net" /> -->
                             <el-table-column label="Category" prop="category" />
                             <el-table-column label="Address" prop="info.address" v-if="categoryValue=='Account'"/>
                             <el-table-column label="Txn Hash" prop="info.txn_hash" v-if="categoryValue=='Transaction'"/>
@@ -112,8 +102,6 @@ export default {
             labels:[],
             labels_list:[],
             searchContent:'',
-            // netValue:"",
-            // netOptions:[],
             categoryValue:"",
             categoryOptions:[],
             tableData:[],
@@ -126,12 +114,6 @@ export default {
         }
     },
     computed:{
-        // netValue(){
-        //     return this.netOptions[0]
-        // },
-        // categoryValue(){
-        //     return this.categoryOptions[0]
-        // },
         labelsContainerIsShow(){
             return this.searchContent==""
         },
@@ -198,7 +180,6 @@ export default {
             wordCloud.render();
             // 图例名称添加点击事件
             wordCloud.on('element:click', (...args) => {
-                // console.log(args[0].data.data.text);
                 this.searchContent = args[0].data.data.text;
                 this.search();
             });
@@ -242,16 +223,12 @@ export default {
         },
         search(){
             if(this.searchContent != ""){
-                // console.log(this.searchContent)
-                // console.log(this.netValue)
-                // console.log(this.categoryValue)
                 // 向后端请求数据
                 axios({
                     method: 'get',
                     url:'/api/cloud/filter',
                     params:{
                         keyword: this.searchContent,
-                        // net: this.netValue,
                         category: this.categoryValue,
                         page:1,
                         pagesize:this.pageSize
@@ -260,9 +237,7 @@ export default {
                         return Qs.stringify(params, {arrayFormat: 'brackets'})
                     },
                 }).then((response)=>{
-                    // console.log(response)
                     const data = response.data;
-                    // console.log(data)
                     this.total = data.total;
                     this.tableData = data.data== null? []: data.data;
                     this.currentPage = data.page;
@@ -276,15 +251,12 @@ export default {
             this.search()
         },
         getTableData(){
-            // console.log(this.pageSize);
-            // console.log(this.currentPage);
             //向后端请求数据
             axios({
                 method: 'get',
                 url:'/api/cloud/filter',
                 params:{
                     keyword: this.searchContent,
-                    // net: this.netValue,
                     category: this.categoryValue,
                     page:this.currentPage,
                     pagesize:this.pageSize
@@ -293,9 +265,7 @@ export default {
                     return Qs.stringify(params, {arrayFormat: 'brackets'})
                 },
             }).then((response)=>{
-                // console.log(response)
                 const data = response.data;
-                // console.log(data)
                 this.total = data.total;
                 this.tableData = data.data;
                 this.currentPage = data.page;
@@ -304,15 +274,10 @@ export default {
             })
         },
         getAllLabelData(data){
-            // console.log(data)
             let labels = [];
             for(let key in data){
-                // console.log(key);
                 const key_data = data[key];
-                // console.log(key_data);
                 key_data.forEach(element => {
-                    // console.log(key)
-                    // console.log(element);
                     this.element = element
                     let index = labels.findIndex((value)=>{
                         return value.name == this.element.name
@@ -321,24 +286,18 @@ export default {
                         labels.push({
                             'name': element.name,
                             'cnt':element.cnt,
-                            // 'ctg':[{
-                            //    [key] : element.cnt
-                            // }]
                             'ctg':[{
                                 'category':key,
                                 'cnt':element.cnt
                             }]
                         })
                     }else{
-                        // let label = labels[index];
                         labels[index].cnt = labels[index].cnt + element.cnt;
-                        // labels[index].ctg.push({[key]: element.cnt})
                         labels[index].ctg.push({
                             'category':key,
                             'cnt':element.cnt
                         })
                     }
-                    // console.log(labels)
                 });
             }
             return labels
@@ -349,14 +308,11 @@ export default {
             method: 'get',
             url: '/api/cloud'
         }).then((response)=>{
-            // console.log(response)
             const data = response.data.data;
-            // console.log(data)
             // 保留数据
             this.all_labels_data = data;
             // 处理数据，得到词云对应的数据
             this.labels = this.getAllLabelData(data);
-            // console.log(this.labels)
             const category_list = Object.keys(data);
             this.categoryOptions = category_list;
             this.categoryValue = category_list[0];
@@ -366,16 +322,11 @@ export default {
             console.log('here');
             console.log(error);
         })
-
-        // console.log(this.$refs.dataTable)
     }
 }
 </script>
 
 <style lang="less" scoped>
-    // :root{
-    //     --el-color-primary: green;
-    // }
     @primary-color:#248054;
     #whole-wordcloud-page{
         width:100%;
@@ -386,6 +337,15 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+    #return-button{
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 80%;
+        img{
+            width:150px;
+        }
     }
     #wordcloud-container{
         width: 80%;
