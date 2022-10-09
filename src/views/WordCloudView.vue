@@ -98,8 +98,8 @@ import axios from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Qs from 'qs'
 import {mix} from '../assets/js/utils'
-// axios.defaults.baseURL = 'http://8.134.73.140:58003'
-axios.defaults.baseURL = window.location.origin
+axios.defaults.baseURL = 'http://8.134.73.140:58003'
+// axios.defaults.baseURL = window.location.origin
 export default {
     data(){
         return{
