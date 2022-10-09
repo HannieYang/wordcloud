@@ -1,6 +1,6 @@
 <template>
     <div id="whole-wordcloud-page">
-        <el-container>
+        <el-container v-loading="pageLoading" element-loading-text="Loading...">
             <el-main>
                 <div id="return-button">
                     <a href="http://xblock.pro/#/"><img src="../assets/xblocklogo-326_49.png" /></a>
@@ -9,6 +9,11 @@
                     <p>XLabelCloud</p>
                     <div id="wordcloud"></div>
                 </div>
+                <el-descriptions :column="3" border>
+                    <el-descriptions-item label="Number of Categories" align="center" label-align="center">{{numOfCategories}}</el-descriptions-item>
+                    <el-descriptions-item label="Number of Labels" align="center" label-align="center">{{numOfLabels}}</el-descriptions-item>
+                    <el-descriptions-item label="Pieces of Data" align="center" label-align="center">{{piecesOfData}}</el-descriptions-item>
+                </el-descriptions>
                 <div id="search-container">
                     <el-row :gutter="20">
                         <el-col :sm="10" :xs="24">
@@ -111,6 +116,10 @@ export default {
             disabled:false,
             background:false,
             total:0,
+            pageLoading: true,
+            numOfLabels: 0,
+            numOfCategories: 0,
+            piecesOfData: 0,
         }
     },
     computed:{
@@ -275,6 +284,7 @@ export default {
         },
         getAllLabelData(data){
             let labels = [];
+            let totalCnt = 0;
             for(let key in data){
                 const key_data = data[key];
                 key_data.forEach(element => {
@@ -298,9 +308,10 @@ export default {
                             'cnt':element.cnt
                         })
                     }
+                    totalCnt += element.cnt;
                 });
             }
-            return labels
+            return [labels, totalCnt]
         },
     },
     mounted(){
@@ -312,12 +323,17 @@ export default {
             // 保留数据
             this.all_labels_data = data;
             // 处理数据，得到词云对应的数据
-            this.labels = this.getAllLabelData(data);
+            const result = this.getAllLabelData(data);
+            this.labels = result[0];
             const category_list = Object.keys(data);
             this.categoryOptions = category_list;
             this.categoryValue = category_list[0];
             this.labels_list = data[this.categoryValue];
+            this.numOfCategories = category_list.length;
+            this.numOfLabels = this.labels.length;
+            this.piecesOfData = result[1];
             this.initChart();
+            this.pageLoading = false;
         }).catch((error)=>{
             console.log('here');
             console.log(error);
@@ -352,6 +368,10 @@ export default {
         p{
             font-size: 30px;
         }
+    }
+    .el-descriptions{
+        width:70%;
+        margin:20px 0;
     }
     #search-container{
         width:80%;
