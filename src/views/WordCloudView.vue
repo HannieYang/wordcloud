@@ -124,13 +124,13 @@ export default {
     },
     computed:{
         labelsContainerIsShow(){
-            return this.searchContent==""
+            return this.searchContent == ""
         },
         searchResultTableIsShow(){
-            return this.tableData.length != 0
+            return this.tableData.length != 0 && this.searchContent !=""
         },
         emptyIsShow(){
-            return this.searchContent!="" && this.tableData.length == 0
+            return this.searchContent != "" && this.tableData.length == 0
         }
     },
     created(){
@@ -200,15 +200,17 @@ export default {
             this.search();
         },
         categoryChange(){
-            if(this.searchContent.length == 0){
-                this.labels_list = this.all_labels_data[this.categoryValue]
-            }else{
-                this.search()
-            }
+            // if(this.searchContent.length == 0){
+            //     this.labels_list = this.all_labels_data[this.categoryValue]
+            // }else{
+            //     this.search()
+            // }
+            this.labels_list = this.all_labels_data[this.categoryValue];
+            this.inputSearchContent();
         },
         clickSearchButton(){
             if(this.searchContent.length == 0){
-                ElMessageBox.alert('请输入查询内容', '提示', {
+                ElMessageBox.alert('Please enter the query content!', 'Tips', {
                     // if you want to disable its autofocus
                     // autofocus: false,
                     confirmButtonText: 'OK',
@@ -224,7 +226,7 @@ export default {
             }
         },
         inputSearchContent(){
-            if(this.searchContent.length == 0){
+            if(this.searchContent == ""){
                 this.tableData = []
             }else{
                 this.search()
